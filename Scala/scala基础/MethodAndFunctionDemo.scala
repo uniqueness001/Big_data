@@ -8,6 +8,8 @@ object MethodAndFunctionDemo {
       f(2, 6)
     }
 
+    def m2(( a:Int, b :Int ) => Int) : Int = { a+b }
+
     //定义一个函数f1，参数是两个Int类型，返回值是一个Int类型
     val f1 = (x: Int, y: Int) => x + y
     //再定义一个函数f2
@@ -23,6 +25,9 @@ object MethodAndFunctionDemo {
       //调用m1方法，并传入f2函数
       val r2 = m1(f2)
       println(r2)
+
+      val r3 = m2(3+4)
+      println(r3)
     }
   }
 
