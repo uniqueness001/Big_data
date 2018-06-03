@@ -1,0 +1,2 @@
+spark本地模式:  SparkConf().setMaster(path)
+spark集群模式：SparkConf().setJars(path).setMaster(path)

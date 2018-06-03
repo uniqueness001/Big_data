@@ -1,0 +1,7 @@
+spark中的RDD缓存的目的：
+1、RDD进行缓存的，这样在之后使用的过程中就不需要重新计算了，可以大大节省程序运行时间。
+2、将任意的RDD缓存到内存或者磁盘的文件系统中，若存在RDD分片丢失，可以通过构建它的transformation自动重构
+spark中的RDD缓存方式主要有两种：persist和cache（是transformation）
+cache是persist的特例，cache中的StorageLevel参数为默认状态，而persist中的参数是可以手动设置的。
+使用例子：
+rdd.cache()、rdd.persist()、rdd.unpersist(true)、

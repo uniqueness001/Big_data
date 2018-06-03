@@ -1,0 +1,10 @@
+1、Checkpoint 的产生就是为了相对而言更加可靠的持久化数据，在 Checkpoint 可以指定把数据放在本地并且是多副本的方式，但是在正常生产环境下放在 HDFS 上，这就天然的借助HDFS 高可靠的特征来完成最大化的可靠的持久化数据的方式。
+2、Checkpoint 是为了最大程度保证绝对可靠的复用 RDD 计算数据的 Spark 的高级功能，通过 Checkpoint 我们通过把数据持久化到 HDFS 上来保证数据的最大程度的安任性
+3、Checkpoint 就是针对整个RDD 计算链条中特别需要数据持久化的环节(后面会反覆使用当前环节的RDD) 开始基于HDFS 等的数据持久化复用策略，通过对 RDD 启动 Checkpoint 机制来实现容错和高可用
+代码：
+sc.setCheckpointDir("hdfs://path")
+val rdd = sc.makeRDD(1 to 20, numSlices = 1)
+rdd.cache()
+rdd.checkpoint()
+
+keywords：利用HDFS的高可靠、为了更加可靠的持久化数据、多副本方式、高容错

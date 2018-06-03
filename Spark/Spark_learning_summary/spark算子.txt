@@ -1,0 +1,32 @@
+spark本地模式:  SparkConf().setMaster(path)
+spark集群模式：SparkConf().setJars(path).setMaster(path)
+
+spark常用算子：
+Transformation：
+map():映射算子，例如：map(_._1, 1)、map(x=>(x._1 , 1))、map(x=>( x(0) , 1))
+//reduce():根据映射函数f，对RDD中的元素进行二元计算，返回计算结果。
+filter():过滤算子，例如：filter(x%3==0)、filter(x =>x.contains('aaabb'))
+flatMap():压平+映射算子，例如：x.flatMap(x=>x.split("\\s"))、flatMap(_._1,1)
+sample():随机采样，是否重复采样，抽取数据的百分比例
+union():实现合并
+distinct():实现去重
+groupByKey():
+foreachpartition():
+reduceByKey():
+sortBy():实现排序
+sortByKey():
+join():
+Action算子:
+reduce():根据映射函数f，对RDD中的元素进行二元计算，返回计算结果。
+collect():collect用于将一个RDD转换成数组。
+count():实现统计
+first():第一个元素
+take():
+takeSample():
+saveAsTextFile():
+foreach():
+foreachpartition():
+countByKey():
+
+
+
