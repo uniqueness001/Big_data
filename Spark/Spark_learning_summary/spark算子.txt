@@ -8,7 +8,7 @@ map():映射算子，例如：map(_._1, 1)、map(x=>(x._1 , 1))、map(x=>( x(0) , 1))
 filter():过滤算子，例如：filter(x%3==0)、filter(x =>x.contains('aaabb'))
 flatMap():压平+映射算子，例如：x.flatMap(x=>x.split("\\s"))、flatMap(_._1,1)
 sample():随机采样，是否重复采样，抽取数据的百分比例
-union():实现合并
+union():求并集
 distinct():实现去重
 groupByKey():
 foreachpartition():

@@ -1,0 +1,11 @@
+工作流程：首先生成了一个集合变量，把这个变量通过sparkContext的broadcast函数进行广播，最后在rdd的每一个partition迭代时，使用这个广播变量。
+具体代码实现：
+val values = List[Int](1,2,3)
+
+val broadcastValues = sparkContext.broadcast(values)
+
+rdd.mapPartitions(iter => {
+
+  broadcastValues.getValue.foreach(println)
+
+})
