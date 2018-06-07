@@ -1,0 +1,11 @@
+MapReduce执行流程：Input->Mappers->Middle Result->Reducers->Output
+1、Input:为map准备数据，定义相关的参数：minSize，maxSize，blockSize等等
+2、Map映射：map内部具体实现过程，可由用户自己定义，在HDFS上，文件数据是被备份多份的（默认是3份），所以计算将会寻找拥有此数据的最空闲的结点；
+3、Middle Rsult：shuffle（派发）；sort（排序）；combine（合并）
+Mapper端的shuffle：sort（排序）；combine（合并）；paritition（分区）
+sort：把map产生的结果按照key值进行排序；
+combine：将key相同的记录进行合并；
+partition：数据均衡分配给Reducer
+Reducer端的shuffle：从多个结点下载Mappers处理后的结果，并对这些结果数据进行处理
+4、Reduce：
+Reducer接收形式的数据流，形成形式的输出，具体的操作过程可以由用户自己定义，最终结果可以直接写入HDFS中，每个reduce进程都会对应一个输出的文件名，以post开头
