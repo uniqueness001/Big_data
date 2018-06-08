@@ -9,3 +9,5 @@ partition：数据均衡分配给Reducer
 Reducer端的shuffle：从多个结点下载Mappers处理后的结果，并对这些结果数据进行处理
 4、Reduce：
 Reducer接收形式的数据流，形成形式的输出，具体的操作过程可以由用户自己定义，最终结果可以直接写入HDFS中，每个reduce进程都会对应一个输出的文件名，以post开头
+数据本地化：
+Mapreduce中负责计算任务调度JobTracker对应HDFS中的负责存储的任务调度NameNode；而负责计算任务的TaskTracker则对应HDFS中负责存储任务的DataNode；一般两者都部署在同一台机器上。
