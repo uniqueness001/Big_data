@@ -100,3 +100,17 @@ PARTITION(year = 2012,month =1,day =1) ENABLE NO_DROP;
 防止分区被删除；
 ------------------------------
 未完待续：第五章
+1、向管理表中加载数据
+LOAD DATA LOCAL INPATH "{env:HOME}/california-employees"
+OVERWRITE INTO TABLE employees
+PARTITION { country = "US",state = "CA"  };
+2、通过查询语句向表中插入数据(OVERWRITE是对分区进行覆盖)
+INSERT OVERWRITE TABLE employees
+PARTITION {country = "US",state = "OR" }
+SELECT * FROM staged_employees se
+WHERE se.cnty ="US" AND se.st = "OR";
+3、动态分区插入
+INSERT OVERWRITE TABLE employees
+PARTITION(country,state)
+SELECT...,se.cty,se.st
+FROM staged_employees se;
