@@ -1,0 +1,102 @@
+1、set对环境进行修改
+set env:HOME;
+2、hivevar意义用户自定义变量，set命令给变量赋新值
+--define foo=bar
+set hivevar:foo=bar2;
+3、实战
+create table love(i  int, ${hivevar:foo}  string};
+或者create table love(i  int, ${foo}  string};
+describe my;
+4、从文件中执行Hive查询
+实战：
+创建脚本文件
+hive -f /path/file/mylove.hql
+编写脚本文件
+cat /path/file.mylove.hql
+编写内容
+SELECT * FROM src x；
+hive
+执行脚本
+source /path/file/mylove.hql;
+5、查看操作命令历史
+Hive会将最近的10000行命令记录到文件 HOME/.hivehistory中
+如果用户想再次执行之前执行过的某条命令，只需要将光标滚动到那条记录然后按Enter键就可以了。
+ ctrl+A代表光标移到行首，ctrl+B代表将光标移到行尾     
+6、用户如果要操作shell命令，不需要退出hive CLI只要简单在命令前加上！并且以分号（；）结尾就可以；若用户想操作HDFS中的命令，输入命令并以（）；）结尾就可以
+7、 Hive可以开头使用--进行注释
+8、基础数据类型
+TINYINT、SMALINT、INT、BIGINT、BOOLEAN(布尔)、FLOAT、DOUBLE、STRING、TIMESTAMP、BINARY
+实战：
+1、CREATE TABLE employees （
+  name     STRING，
+  salary     FLOAT,
+  subordinartes  ARRAY<STRING>,
+  dedcuctions     MAP<STRING,FLOAT>,
+  address             STRUCT<street:STRING,city:STRING,state:STRING>);
+）
+ 2、定义一个表数据按照逗号进行分割
+CREATE TABLE some_data(
+     first  FLOAT,
+     second FLOAT,
+     third   FLOAT
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY  " ,";
+8、Hive数据库
+CREATE  DATABASE financials;
+CREATE DATABASE IF NOT EXISTS finanicals;
+SHOW DATABASES;
+SHOW DATABASES LIKE "h. *";
+
+DESCRIBE DATABASE finanicials;
+显示数据库所在地址
+DESCRIBE EXTENDED mydb.employees
+显示表中的详细信息
+USE finanicials； 将某个数据库设置为用户当前的工作数据库
+DROP DATABASE IF EXISTS finanicials；
+HIVE默认情况下是不允许用户删除一个包含有表的数据库的，用户要删除数据库之前要先删除表，具体操作如下：
+DROP DATABASE IF EXISTS finanicials CASCADE;
+
+9、创建表
+CREATE TABLE IF NOT EXISTS mydb.employees (
+  name    STRING   COMMENT "Employee name",
+  salary    FLOAT     COMMENT "Employee salary",
+  deductions MAP<STRING , FLOAT>)
+COMMENT的意思：说明
+SHOW TBLPROPERTIES table_name               用于列举某个表的TBLPROPERTIES属性信息
+拷贝一张已经存在的表
+CREATE TABLE IF NOT EXISTS mydb.employees2
+LIKE mydb.employees;
+实战：建立一个外部表来读取数据
+CREATE EXTERNAL TABLE IF EXISTS stocks（
+  exchange    STRING,
+  symbol       STRING,
+  price_open  FLOAT,
+  volume       INT）
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ","
+LOCATION "/data/stocks";
+EXTERNAL 告诉了hive这是一张外部表。
+实战：创建一张分区表
+CREATE TABLE employees （
+  name     STRING,
+  salary     FLOAT,
+  deductions  MAP<STRING,FLOAT>,
+）
+PARTITIONDE BY (country STRING, state STING)；
+创建外部分区表
+CREATE EXTERNAL TABLE IF NOT EXISTS log_messages (
+hms  INT,
+message STRING
+)
+PARTITIONED BY (hms INT）
+ROW FORMAT DELIMITED FIELDS TERMINATED BY "\t";
+修改分区
+ALTER TABLE log_messages ADD PARTITION(year = 2012， month = 1)
+LOCATION " hdfs：//path.. "
+ALTER TABLE...ARCHIVE PARTITION:将这个分区内的文件打成一个Hadoop压缩包
+HIVE提供各种保护
+ALTER TABLE logmessage 
+PARTITION(year = 2012,month =1,day =1) ENABLE NO_DROP;
+防止分区被删除；
+------------------------------
+未完待续：第五章
