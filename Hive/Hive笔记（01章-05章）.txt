@@ -114,3 +114,22 @@ INSERT OVERWRITE TABLE employees
 PARTITION(country,state)
 SELECT...,se.cty,se.st
 FROM staged_employees se;
+4、动静态分区插入
+INSERT OVERWRITE TABLE employees
+PARTITION(country=“US”,state)
+SELECT...,se.cty,se.st
+FROM staged_employees se
+WHERE se.cty = "US";
+5、单个查询语句中创建表并加载数据
+CREATE TABLE ca_employees
+AS SELECT name salary adress
+FROM employees
+WHERE se.state = "CA";
+6、数据的导出
+如果数据是你所需要的格式，可以直接copy
+hadoop fs -cp source_path target_path
+如果只是想取数据中的某一个区或者某一个要求，可以考虑如下
+INSERT OVERWRITE LOCAL DIRECTORY "target_path"
+SELECT name,salary,adress
+FROM "source_path"
+WHERE 条件；

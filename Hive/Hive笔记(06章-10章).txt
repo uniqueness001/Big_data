@@ -1,0 +1,89 @@
+第六章
+1、SELECT...FROM..
+SELECT name， salary FROM employees；
+SELECT e.name,e.salary FROM employees e ;
+SELECT name,sub[0] FROM employees;
+SELECT name,deductions["State Taxes"] FROM employees;
+SELECT name,adress.city FROM employees;
+使用正则化
+SELECT symbol，“price. *”FROM stocks;
+2、算术运算符
+比较特殊的：~A：A按位取反；A&B：A和B按位去与
+A|B:A和B按位去或；
+3、内置数学函数
+round():返回一个double类型的最近整数 ，可以保留n位小数
+floor(double d):返回小于等于（<=）d的最大整数值
+ceil（double d）：返回大于等于（<=）d的最小整数值
+rand（）:每行返回一个double型的随机数
+exp（double d）：返回e的幂次方
+sqrt(double d):计算d的平方根，d是double型数据
+abs（double d）：计算d的绝对值
+pi():圆周率
+4、聚合函数
+实例：
+SELECT count（*），avg（salary）FROM employees；
+SELECT count(DISTINCT symbol) FROM stocks;  DISTINCT:去重
+count（）：计算总行数；count(expr):计算提供的expr表达式的值
+sum（）：计算指定行的值的和
+avg（）：计算平均数；min（）： max（）：
+variance（）：计算方差；collect_set(col):返回集合col元素排重后的数组
+5、表生成函数
+explode（ARRAY array）：返回0到多行结果，每行对应输入的array数组中的一个元素
+explode（MAP map）：返回0到多行结果，每行对应每个键值对
+6、LIMIT 6：限制返回的行数
+CASE...WHEN...THEN:
+SELECT name，salary，
+	CASE
+		WHEN salary< 50000.0 THEN "low"
+		WHEN salary >=50000.0 AND salary <70000.0 THEN "middle"
+		ELSE "very high"
+	END 
+	FROM employee;
+7、关于浮点数比较
+SECLECT name，salary deductions["Federal Taxes"]
+FROM employees WHERE deductions["Federal Taxes"]>0.2;
+其中发现deductions["Federal Taxes"]=0.2的记录也被输出
+原因：我们Hive表中的0.2其实是double型的（0.200000001）大于0.2
+解决方法：WHERE deductions["Federal Taxes"]>cast(0.2 AS FLOAT);
+8、LIKE 和RLIKE
+SELECT name，address,street FROM employees WHERE adress.street LIKE "%Ave."; //以字符串Ave结尾的雇员名
+LIKE “O%”；//以O开头的雇员名称
+LIKE "%Chi%"；含有Chicago的雇员名称和住址
+FROM employees WHERE address.street RLIKE ".*(Chicago|Ontario).*";//从employees表中查询所有住址的街道中含有单词Chicago或Ontario的雇员名称
+9、GROUP BY ...HAVING
+SELECT year(ymd),avg(price_close) FROM stocks
+WHERE exchange ="XXXX"AND symbol =“XXXX”
+GROUP BY year（ymd）
+HAVING avg（price_close）>cast(50.0 AS FLOAT)
+10、JOIN:HIVE支持通常的SQL JOIN语句，但是只支持等值连接
+1、内连接(自然连接): 只有两个表相匹配的行才能在结果集中出现
+2、外连接：根据WHERE条件将匹配结果显示出来，不能满足ON条件的进行NULL补充
+INNER JOIN
+SELECT a.ymd, a.price_close,b.price_close
+FROM stocks a JOIN stocks b ON a.ymd=b.ymd
+WHERE a.symbol='AAPL' AND b.symbol ='IBM';
+LEFT OUTER JOIN
+SELECT s.ymd, s.symbol,s.price_close,d.dividend
+FROM stocks s LEFT OUTER JOIN dividends d ON s.ymd=d.ymd AND s.symbol=d.symbol
+WHERE s.symbol = 'AAPL';
+在这种JOIN连接操作中，JOIN操作符左边表中符合WHERE子句的所有记录将会被返回；JOIN操作符右边表中如果没有符合ON后面连接条件的记录时，那么从右边表指定选择的列的值将会是NULL
+RIGHT OUTER JOIN
+SELECT s.ymd,s.symbol,s.price_close,d.dividend
+FROM dividends d RIGHT OUTER JOIN stocks s ON d.ymd =s.ymd AND d.symbol=s.symbol
+WHERE s.symbol = 'AAPL'；
+在这种JOIN连接操作中，JOIN操作符右边表中符合WHERE子句的所有记录将会被返回；JOIN操作符左边表中如果没有符合ON后面连接条件的记录时，那么从右边表指定选择的列的值将会是NULL
+
+--------------------------------------------------------------
+创建外部表
+CREATE EXTERNAL TABLE IF NOT EXISTS dividends （
+ymd  STRING，
+dividend FLOAT
+）
+PARTITIONED BY (exchange STRING, symbol STRING)
+ROW FORMAT DELIMITED FIFLDS TERMINATED BY ',';
+11、HIVE中大小表的问题：小表在前，大表在后
+自动查询优化哪种表为大表
+SELECT /*+STREAMTABLE(s) */ s.ymd,s.symbol,s.price_close,d.dividend 
+FROM stocks s JOIN dividends d ON s.symbol =d.symbol AND s.ymd = d.ymd
+WHERE s.symbol ='AAPL';
+
